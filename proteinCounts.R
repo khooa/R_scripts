@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 #setwd("D:/PCa_Discovery/Data_analysis_files/txt_190917_mbr_exo/")
 
 source("D:/PCa_Discovery/R_scripts/mqlib_prot.R")
