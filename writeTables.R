@@ -50,10 +50,16 @@ makeDF <- function(x) {
 
 # get ibaq data
 ibaq <- pgGetiBAQ(pg_f)
+
+names(ibaq) <- paste("ibaq", names(ibaq), sep = "_")
+
 ibaq_df <- makeDF(ibaq)
 
 # get lfq data
 lfq <- pgGetLFQ(pg_f)
+
+names(lfq) <- paste("lfq", names(lfq), sep = "_")
+
 lfq_df <- makeDF(lfq)
 
 ##------------PEPTIDES----------------##
@@ -64,6 +70,8 @@ pep <- pgRead("peptides.txt")
 pep <- pgRemoveRev(pep)
 pep <- pgRemoveCon(pep)
 pep.lfq <- pgGetLFQ(pep)
+
+names(pep.lfq) <- paste("lfq", names(pep.lfq), sep = "_")
 
 peptide.info <- pep[,c("Sequence", "Missed.cleavages", "Charges", "Score", "PEP", "Leading.razor.protein", "Gene.names")]
 
