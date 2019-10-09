@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 #setwd("D:/PCa_Discovery/Data_analysis_files/txt_190917_mbr_exo/")
-
 source("D:/PCa_Discovery/R_scripts/mqlib_prot.R")
 theme_set(plot_theme())
 
@@ -27,26 +26,30 @@ mdf <- melt(df, id.vars = "sample")
 
 mdf$sample <- gsub("Identification.type.", "", mdf$sample)
 
-# split id vars
-id_var <- getSampleIDs(mdf$sample)
-id_var$group <- ifelse(str_detect(id_var$patient, "^B"), "benign", "cancer")
-
-mdf_id <- cbind.data.frame(id_var, mdf)
-
 # sample order
-sample_order <- subset(mdf_id, variable == "MS2")
+sample_order <- subset(mdf, variable == "MS2")
 sample_order <- sample_order[order(sample_order$value),]
 
 svg("R_figures/protCount_barplot_lfq_withMatching.svg", width = 16, height = 4)
-ggplot(mdf_id, aes(sample, value, fill = variable))+
+ggplot(mdf, aes(sample, value, fill = variable))+
   geom_bar(stat = "identity", position = position_dodge())+
-  scale_x_discrete(limits = sample_order$sample, labels = mdf_id$patient)+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8))
+  scale_x_discrete(limits = sample_order$sample, labels = sample_order$sample)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8))+
+  geom_text(aes(label = value), position = position_dodge(width = 0.9), angle = 90, hjust = 1.2, vjust = 0.3)+
+  scale_fill_manual(values = c("#4682B4", "#a9a9a9"))+
+  labs(x = NULL, y = "Number of Proteins", fill = "ID Type")
 dev.off()
 
+print("protCount_barplot_lfq_withMatching.svg done")
+
 svg("R_figures/protCount_barplot_stacked_lfq_withMatching.svg", width = 16, height = 4)
-ggplot(mdf_id, aes(sample, value, fill = variable))+
+ggplot(mdf, aes(sample, value, fill = variable))+
   geom_bar(stat = "identity", position = position_stack(rev = T))+
-  scale_x_discrete(limits = sample_order$sample, labels = mdf_id$patient)+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8))
+  scale_x_discrete(limits = sample_order$sample, labels = sample_order$sample)+
+  geom_text(aes(label = value), position = position_stack(rev = T), angle = 90, hjust = 1.2, vjust = 0.3)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8))+
+  scale_fill_manual(values = c("#4682B4", "#a9a9a9"))+
+  labs(x = NULL, y = "Number of Proteins", fill = "ID Type")
 dev.off()
+
+print("protCount_barplot_stacked_lfq_withMatching.svg done")
