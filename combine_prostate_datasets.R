@@ -89,7 +89,7 @@ for (i in seq_along(genelist_hpa)) {
 names(genelist_hpa_df) <- names(genelist_hpa)
 
 #'--------------------------------------------------
-#'----- Get CCLE prostate proteins -----------------
+#'----- Get CCLE prostate genes -----------------
 #'--------------------------------------------------
 
 ccle <- pgRead("ccle_rsem_prostate_genes.txt")
@@ -97,7 +97,7 @@ ccle <- pgRead("ccle_rsem_prostate_genes.txt")
 genes_ccle <- prostateGeneDF(ccle$genes, "ccle")
 
 #'--------------------------------------------------
-#'----- Get GTEX prostate proteins -----------------
+#'----- Get GTEX prostate genes -----------------
 #'--------------------------------------------------
 
 gtex <- pgRead("GTEx_v8_gene_median_tpm.gct")
@@ -107,6 +107,14 @@ gtex[gtex == 0] <- NA
 gtex_prostate <- subset(gtex, !is.na(Prostate))
 
 genes_gtex <- prostateGeneDF(gtex$Description, "gtex")
+
+#'--------------------------------------------------
+#'----- Get Gato et al prostate proteins -----------
+#'--------------------------------------------------
+
+gato <- pgRead("pca_gato_tissue.txt")
+
+
 
 #'------------------------------------------------------------------
 #'----- Make dataframe of genes detected in each dataset ------------
@@ -127,6 +135,8 @@ dataset_df <- subset(dataset_df, genes != "")
 
 # reformat into wide format
 dataset_df_wide <- dcast(dataset_df, genes ~ dataset)
+
+dataset_df_wide[-1][dataset_df_wide[-1] > 0] <- 1
 
 # write out file
 
