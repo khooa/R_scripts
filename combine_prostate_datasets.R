@@ -1,6 +1,6 @@
 source("D:/R_scripts/mqlib_prot.R")
 
-#setwd("D:/PCa_Discovery/Data_analysis_files/subset_prostate_proteins/")
+setwd("D:/PCa_Discovery/Data_analysis_files/subset_prostate_proteins/")
 
 #'--------------------------------
 #'---------Functions--------------
@@ -112,9 +112,9 @@ genes_gtex <- prostateGeneDF(gtex$Description, "gtex")
 #'----- Get Gato et al prostate proteins -----------
 #'--------------------------------------------------
 
-gato <- pgRead("pca_gato_tissue.txt")
+#gato <- pgRead("pca_gato_tissue.txt")
 
-
+#genes_gato <- prostateGeneDF(gato$genes, "gato")
 
 #'------------------------------------------------------------------
 #'----- Make dataframe of genes detected in each dataset ------------
@@ -142,3 +142,5 @@ dataset_df_wide[-1][dataset_df_wide[-1] > 0] <- 1
 
 write.table(dataset_df_wide, file = "D:/PCa_Discovery/Data_analysis_files/subset_prostate_proteins/R_tableOutput/prostate_proteins_unfiltered.txt",
             sep = "\t", row.names = F)
+
+rm(list=ls())

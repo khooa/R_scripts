@@ -1,7 +1,9 @@
 source("D:/R_scripts/mqlib_prot.R")
 theme_set(plot_theme())
 
-#setwd("D:/PCa_Discovery/Data_analysis_files/subset_prostate_proteins/")
+library(reshape2)
+
+setwd("D:/PCa_Discovery/Data_analysis_files/subset_prostate_proteins/")
 
 data <- pgRead("R_tableOutput/prostate_proteins_unfiltered.txt")
 
@@ -29,7 +31,7 @@ dev.off()
 data_prostate_filtered <- subset(data_subset, sum > 4)
 
 # write table to file
-write.table(data_prostate_filtered, file = "R_tableOutput/prostate_proteins_filtered_191009.txt", sep = "\t", row.names = F)
+write.table(data_prostate_filtered, file = "R_tableOutput/prostate_proteins_filtered_191010.txt", sep = "\t", row.names = F)
 
 #---------------------------------------------------------------------------
 #----- Make plot of "likely prostate proteins" vs "prostate proteins"-------
@@ -63,25 +65,31 @@ dev.off()
 proteomics_data <- data[,c(1, grep("^pca", names(data)))]
 proteomics_data_f <- proteomics_data[proteomics_data$genes %in% data_prostate_filtered$genes,]
 
-proteomics_prot_count <- data.frame(matrix(ncol = 3, nrow = 7))
+proteomics_prot_count <- data.frame(matrix(ncol = 3, nrow = 8))
 names(proteomics_prot_count) <- c("dataset", "total_prot", "prostate_prot")
 
 proteomics_prot_count[1] <- names(proteomics_data_f[-1])
 proteomics_prot_count[2] <- apply(proteomics_data[-1], 2, function(x) sum(x))
 proteomics_prot_count[3] <- apply(proteomics_data_f[-1], 2, function(x) sum(x))
 
-proteomics_prot_count$percent_difference <- ((proteomics_prot_count$total_prot - proteomics_prot_count$prostate_prot)/proteomics_prot_count$total_prot)*100
+proteomics_prot_count$difference <- proteomics_prot_count$total_prot - proteomics_prot_count$prostate_prot
+proteomics_prot_count$percent_difference <- (proteomics_prot_count$difference/proteomics_prot_count$total_prot)*100
 
-m_proteomics_count <- melt(proteomics_prot_count, id.vars = "dataset")
+m_proteomics_count <- melt(proteomics_prot_count, id.vars = c("dataset", "total_prot", "percent_difference"))
 
 # make filled barplot
 
-xaxis_order <- proteomics_prot_count[order(-proteomics_prot_count$percent_difference),]
+xaxis_order <- m_proteomics_count[order(-m_proteomics_count$percent_difference),]
 
-ggplot(subset(m_proteomics_count, variable != "total_prot"), aes(dataset, value, fill = variable))+
-  geom_bar(stat = "identity", position = position_fill(reverse = T))+
+svg("R_figures/barplot_percent_prostate.svg", height = 5, width = 8)
+ggplot(m_proteomics_count, aes(dataset, value, fill = variable))+
+  geom_bar(stat = "identity", position = position_fill(reverse = T), width = 1.5)+
   labs(x = NULL, y = "Percentage of proteins", fill = NULL)+
   scale_fill_manual(values = c("#377eb8", "#a9a9a9"))+
   scale_x_discrete(limits = xaxis_order$dataset)+
   theme(legend.position = "top",
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+dev.off()
+
+rm(list=ls())
+   

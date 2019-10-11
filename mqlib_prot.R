@@ -4,7 +4,6 @@ library("extrafont")
 library("circlize")
 library("data.table")
 library("scales")
-library("dplyr")
 library("gdata")
 library("limma")
 library("ggrepel")
@@ -14,6 +13,7 @@ library("VennDiagram")
 library("ComplexHeatmap")
 library("UpSetR")
 library("stringr")
+library("dplyr")
 
 #'------------------------------------------------------------------------------------------
 #' Colours
