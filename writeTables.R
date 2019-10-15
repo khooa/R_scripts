@@ -73,7 +73,8 @@ pep.lfq <- pgGetLFQ(pep)
 
 names(pep.lfq) <- paste("lfq", names(pep.lfq), sep = "_")
 
-peptide.info <- pep[,c("Sequence", "Missed.cleavages", "Charges", "Score", "PEP", "Leading.razor.protein", "Gene.names")]
+peptide.info <- pep[,c("Sequence", "Missed.cleavages", "Charges", "Score", "PEP", "Leading.razor.protein")]
+peptide.info$genes <- pep$Gene.names
 
 pep_lfq_df <- cbind.data.frame(peptide.info, pep.lfq)
 
